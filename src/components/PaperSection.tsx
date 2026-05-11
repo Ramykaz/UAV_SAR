@@ -39,12 +39,11 @@ export default function PaperSection() {
               {copied ? 'COPIED ✓' : 'COPY'}
             </button>
             <button
-              aria-label="View on arxiv disabled"
-              disabled
-              title="Link available after publication"
-              className="section-label cursor-not-allowed rounded border border-[var(--border-dim)] px-4 py-2 text-[10px] text-[var(--text-secondary)]"
+              aria-label="View paper"
+              className="glow-hover section-label rounded border border-[var(--accent-cyan)] px-4 py-2 text-[10px]"
+              onClick={() => window.open(atob('aHR0cHM6Ly9kcml2ZS5nb29nbGUuY29tL2ZpbGUvZC8xcmEtR3RBY2xrTG5lUDlDV3RkOWc1aXIzNGUyUXVEaFMvdmlldz91c3A9ZHJpdmVfbGluaw=='), '_blank', 'noopener,noreferrer')}
             >
-              ↗ VIEW ON ARXIV
+              ↗ VIEW PAPER
             </button>
           </div>
         </article>
