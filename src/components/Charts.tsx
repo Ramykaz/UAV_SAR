@@ -1,16 +1,15 @@
 import { useMemo } from 'react'
 import {
   CartesianGrid,
+  ComposedChart,
   Line,
   LineChart,
   ResponsiveContainer,
   Scatter,
-  ScatterChart,
   Tooltip,
   XAxis,
   YAxis,
   ReferenceLine,
-  ZAxis,
 } from 'recharts'
 import { models, recommendedModels } from '../data/models'
 
@@ -99,18 +98,67 @@ export default function Charts() {
         <figcaption className="section-label mb-3 text-xs text-[var(--text-secondary)]">Accuracy vs Latency (Pareto)</figcaption>
         <div className="h-72">
           <ResponsiveContainer>
-            <ScatterChart>
-              <CartesianGrid stroke="rgba(0,212,255,0.2)" />
-              <XAxis type="number" dataKey="latencyMs" name="Latency" unit="ms" stroke="#00d4ff" />
-              <YAxis type="number" dataKey="mAP50" name="mAP50" stroke="#00d4ff" domain={[0.88, 1]} />
-              <ZAxis type="number" dataKey="sizeMB" range={[60, 220]} />
-              <Tooltip contentStyle={{ background: '#0a0f1a', border: '1px solid #1a2535', color: '#e8f4f8' }} />
-              <Scatter data={models} shape={(props: any) => <circle {...props} fill={precisionColor(props.payload.name)} />} />
-              <Line type="monotone" data={frontier} dataKey="mAP50" stroke="#00ff88" dot={false} />
+            <ComposedChart margin={{ top: 8, right: 12, bottom: 8, left: 0 }}>
+              <CartesianGrid stroke="rgba(0,212,255,0.15)" />
+              <XAxis
+                type="number"
+                dataKey="latencyMs"
+                name="Latency"
+                unit="ms"
+                stroke="#00d4ff"
+                tick={{ fontSize: 10 }}
+                domain={['dataMin - 2', 'dataMax + 4']}
+              />
+              <YAxis
+                type="number"
+                dataKey="mAP50"
+                name="mAP50"
+                stroke="#00d4ff"
+                tick={{ fontSize: 10 }}
+                domain={[0.88, 1]}
+              />
+              <Tooltip
+                contentStyle={{ background: '#0a0f1a', border: '1px solid #1a2535', color: '#e8f4f8', fontSize: 11 }}
+                formatter={(value: number, name: string) => [value.toFixed ? value.toFixed(3) : value, name]}
+              />
+              <Scatter
+                data={models}
+                shape={(props: any) => {
+                  const { cx, cy, payload } = props
+                  const r = Math.max(4, Math.min(12, Math.sqrt(payload.sizeMB) * 1.4))
+                  return (
+                    <circle
+                      cx={cx}
+                      cy={cy}
+                      r={r}
+                      fill={precisionColor(payload.name)}
+                      opacity={0.88}
+                      stroke="rgba(0,0,0,0.2)"
+                      strokeWidth={0.5}
+                    />
+                  )
+                }}
+              />
+              <Line
+                type="monotone"
+                data={frontier}
+                dataKey="mAP50"
+                stroke="#00ff88"
+                strokeWidth={1.5}
+                dot={false}
+                legendType="none"
+                isAnimationActive={false}
+              />
               {recommendedModels.map((item) => (
-                <ReferenceLine key={item.modelId} x={item.latencyMs} stroke="rgba(255,107,43,0.4)" />
+                <ReferenceLine
+                  key={item.modelId}
+                  x={item.latencyMs}
+                  stroke="rgba(255,107,43,0.5)"
+                  strokeDasharray="4 3"
+                  label={{ value: item.tier.split(' ')[0], fontSize: 8, fill: 'rgba(255,107,43,0.8)', position: 'top' }}
+                />
               ))}
-            </ScatterChart>
+            </ComposedChart>
           </ResponsiveContainer>
         </div>
       </figure>
@@ -121,10 +169,10 @@ export default function Charts() {
           <ResponsiveContainer>
             <LineChart data={resData}>
               <CartesianGrid stroke="rgba(255,107,43,0.2)" />
-              <XAxis dataKey="r" stroke="#00d4ff" />
-              <YAxis stroke="#00d4ff" domain={[0.8, 1]} />
+              <XAxis dataKey="r" stroke="#00d4ff" tick={{ fontSize: 10 }} />
+              <YAxis stroke="#00d4ff" tick={{ fontSize: 10 }} domain={[0.8, 1]} />
               <Tooltip contentStyle={{ background: '#0a0f1a', border: '1px solid #1a2535' }} />
-              <ReferenceLine x={320} stroke="#ffd700" strokeDasharray="4 4" label="Sweet spot" />
+              <ReferenceLine x={320} stroke="#ffd700" strokeDasharray="4 4" label={{ value: 'Sweet spot', fontSize: 9, fill: '#ffd700' }} />
               <Line type="monotone" dataKey="y5" stroke="#00d4ff" name="YOLOv5n" dot={false} />
               <Line type="monotone" dataKey="y8" stroke="#4c6fff" name="YOLOv8n" dot={false} />
               <Line type="monotone" dataKey="y11" stroke="#00ff88" name="YOLO11n" dot={false} />
@@ -141,11 +189,11 @@ export default function Charts() {
           <ResponsiveContainer>
             <LineChart data={pruneData}>
               <CartesianGrid stroke="rgba(0,212,255,0.2)" />
-              <XAxis dataKey="s" stroke="#00d4ff" />
-              <YAxis stroke="#00d4ff" domain={[0.7, 1]} />
+              <XAxis dataKey="s" stroke="#00d4ff" tick={{ fontSize: 10 }} />
+              <YAxis stroke="#00d4ff" tick={{ fontSize: 10 }} domain={[0.7, 1]} />
               <Tooltip contentStyle={{ background: '#0a0f1a', border: '1px solid #1a2535' }} />
-              <ReferenceLine x={30} stroke="#00ff88" strokeDasharray="4 4" label="Safe zone" />
-              <ReferenceLine x={55} stroke="#ff4d4d" strokeDasharray="4 4" label="Collapse zone" />
+              <ReferenceLine x={30} stroke="#00ff88" strokeDasharray="4 4" label={{ value: 'Safe zone', fontSize: 9, fill: '#00ff88' }} />
+              <ReferenceLine x={55} stroke="#ff4d4d" strokeDasharray="4 4" label={{ value: 'Collapse', fontSize: 9, fill: '#ff4d4d' }} />
               <Line type="monotone" dataKey="y5" stroke="#00d4ff" dot={false} name="YOLOv5n" />
               <Line type="monotone" dataKey="y8" stroke="#4c6fff" dot={false} name="YOLOv8n" />
               <Line type="monotone" dataKey="y11" stroke="#00ff88" dot={false} name="YOLO11n" />

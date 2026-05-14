@@ -21,6 +21,50 @@
   --scan-line: rgba(0, 212, 255, 0.03);
 }
 
+:root.light {
+  --bg-void: #eef2f7;
+  --bg-panel: #ffffff;
+  --bg-surface: #dde5f0;
+  --border-dim: #b8c8d8;
+  --border-glow: #0055a8;
+  --accent-cyan: #0055a8;
+  --accent-orange: #c04020;
+  --accent-green: #006f40;
+  --accent-yellow: #8a6800;
+  --text-primary: #0e1c2e;
+  --text-secondary: #3a5570;
+  --text-data: #0055a8;
+  --thermal-cold: #1a237e;
+  --thermal-warm: #ff6b2b;
+  --thermal-hot: #ffffff;
+  --scan-line: rgba(0, 55, 120, 0.015);
+}
+
+:root.light body,
+:root.light #root {
+  background: var(--bg-void);
+  color: var(--text-primary);
+  scrollbar-color: var(--accent-cyan) var(--bg-surface);
+}
+
+:root.light body::before {
+  opacity: 0.3;
+}
+
+:root.light body::after {
+  opacity: 0.04;
+}
+
+:root.light .hud-panel {
+  background: rgba(255, 255, 255, 0.88);
+  border-color: var(--border-dim);
+}
+
+:root.light .hud-active {
+  border-color: var(--border-glow);
+  box-shadow: 0 0 18px rgba(0, 85, 168, 0.2);
+}
+
 * {
   box-sizing: border-box;
 }
